@@ -1,12 +1,22 @@
 package index;
 
 public class Doc {
+	private int id;
 	private String classID;
 	private String content;
 	
-	public Doc(String classID, String content) {
+	public Doc(int id, String classID, String content) {
+		this.id = id;
 		this.classID = classID;
 		this.content = content;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getClassID() {
@@ -27,7 +37,7 @@ public class Doc {
 
 	@Override
 	public String toString() {
-		return classID + ":" + content;
+		return id + "," + classID + "," + content;
 	}
 	
 }

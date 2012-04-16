@@ -7,14 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.List;
 
 
 public class IndexDAO {
 	private static Connection conn;
 	
 	public static void main(String[] args) throws Exception {
-		Doc doc = getDoc(2);
-		System.out.println(doc);
+		//List<Integer> list = getAllDocs();
+		//System.out.println(list.size());
 	}
 	
 	public static LinkedList<ClassInfo> getAllClasses() throws SQLException {
@@ -33,12 +34,36 @@ public class IndexDAO {
 		return list;
 	}
 	
-	public static ClassInfo getClassInfo(String classID) {
-		
+	public static ClassInfo getClassInfo(String classID) throws SQLException {
+		String classTable = PropertyUitl.getProperty("classTable");
+		String sql = "select classID,des from " + classTable + " where classID=?";
+		Connection conn = getConnection();
+		PreparedStatement statement = conn.prepareStatement(sql);
+		statement.setString(1, classID);
+		ClassInfo info = null;
+		ResultSet resultset = statement.executeQuery();
+		if(resultset.next()) 
+			info = new ClassInfo(classID, resultset.getString(1));
+		resultset.close();
+		statement.close();
+		return info;
 	}
 	
-	public static Doc getDoc(int id) throws SQLException,
-			UnsupportedEncodingException {
+	public static List<Integer> getAllDocs() throws SQLException {
+		String docTable = PropertyUitl.getProperty("docTable");
+		String sql = "select id from " + docTable;
+		Connection conn = getConnection();
+		PreparedStatement statement = conn.prepareStatement(sql);
+		ResultSet resultset = statement.executeQuery();
+		List<Integer> list = new LinkedList<Integer>();
+		while(resultset.next()) 
+			list.add(resultset.getInt(1));
+		resultset.close();
+		statement.close();
+		return list;
+	}
+	
+	public static Doc getDoc(int id) throws SQLException {
 		String docTable = PropertyUitl.getProperty("docTable");
 		String sql = "select classID,content from " + docTable + " where id=?;";
 		Connection conn = getConnection();
@@ -47,11 +72,11 @@ public class IndexDAO {
 		ResultSet resultset = statement.executeQuery();
 		Doc doc = null;
 		if (resultset.next()) {
-			String content = new String(resultset.getString(2).getBytes(),"GBK");
-			doc = new Doc(resultset.getString(1), content);
-			resultset.close();
-			statement.close();
+			String content = resultset.getString(2);
+			doc = new Doc(id, resultset.getString(1), content);
 		}
+		resultset.close();
+		statement.close();
 		return doc;
 	}
 	
