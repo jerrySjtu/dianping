@@ -14,8 +14,8 @@ public class IndexDAO {
 	private static Connection conn;
 	
 	public static void main(String[] args) throws Exception {
-		//List<Integer> list = getAllDocs();
-		//System.out.println(list.size());
+		List<Integer> list = getAllDocs();
+		System.out.println(list.size());
 	}
 	
 	public static LinkedList<ClassInfo> getAllClasses() throws SQLException {

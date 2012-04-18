@@ -16,6 +16,7 @@ public class PropertyUitl {
 		if (props == null) {
 			try {
 				props = new Properties();
+				//System.out.println(System.getProperty("user.dir"));
 				props.load(new FileInputStream("my.conf"));
 			} catch (IOException e) {
 				e.printStackTrace();

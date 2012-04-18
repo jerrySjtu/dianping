@@ -2,6 +2,11 @@ package index;
 
 public class EncodeUtil {
 	
+	public static void main(String[] args) {
+		System.out.println(isChinese("?"));
+		System.out.println(isChinese('?'));
+	}
+	
 	//whether the string is in Chinese
 	public static boolean isChinese(String str) {
 		boolean flag = true;
@@ -10,5 +15,10 @@ public class EncodeUtil {
 				flag = false; break;
 			}
 		return flag;
+	}
+	
+	//whether the string is in Chinese
+	public static boolean isChinese(char c) {
+		return ((c >= 0x4e00) && (c <= 0x9fbb)); 
 	}
 }

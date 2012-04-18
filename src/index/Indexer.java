@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +14,18 @@ import java.util.Set;
 public class Indexer {
 	private static InvertedIndex index;
 
-	public static void main(String[] args) throws Exception {
-		InvertedIndex index = getIndex();
-		System.out.println(index.size());
-	}
-	
-	private static InvertedIndex getIndex() throws SQLException {
+//	public static void main(String[] args) throws Exception {
+//		InvertedIndex index = getIndex();
+//		System.out.println(index.size());
+//		System.out.println(index.getIdfMap().size());
+//	}
+//	
+	public static InvertedIndex getIndex() throws SQLException {
 		if(index == null) {
 			index = new InvertedIndex(4000);
 			//get the id of all documents
 			List<Integer> docList = IndexDAO.getAllDocs();
+			index.setDocNum(docList.size());
 			Iterator<Integer> iterator = docList.iterator();
 			while(iterator.hasNext()) {
 				int docID = iterator.next();
@@ -33,23 +34,15 @@ public class Indexer {
 				//parse the document
 				parseDoc(doc);
 			}
+			//update the idf map
+			index.updateIdfMap();
 		}
 		return index;
 	}
 	
 	private static void parseDoc(Doc doc) {
 		//segament the document
-		String[] wordArray = Segmenter.segment(doc.getContent());
-		Map<String, Integer> wordMap = new HashMap<String, Integer>();
-		//calculate the term frequency
-		for(int i = 0; i < wordArray.length; i++) {
-			if(wordMap.containsKey(wordArray[i])) {
-				int count = wordMap.get(wordArray[i]) + 1;
-				wordMap.put(wordArray[i], count);
-			}
-			else 
-				wordMap.put(wordArray[i], 1);
-		}
+		Map<String, Integer> wordMap = doc.getTFMap();
 		//insert the information into the index
 		Set<String> keySet = wordMap.keySet();
 		Iterator<String> iterator = keySet.iterator();
